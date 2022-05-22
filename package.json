@@ -1,0 +1,23 @@
+{
+  "name": "playground",
+  "version": "1.0.0",
+  "description": "Playground env",
+  "main": "src/main.ts",
+  "scripts": {
+    "dev": "rollup --config rollup.config.dev.js",
+    "build": "rollup --config rollup.config.dist.js",
+    "watch": "rollup --watch --config rollup.config.dev.js"
+  },
+  "devDependencies": {
+    "@rollup/plugin-replace": "^4.0.0",
+    "phaser": "^3.55.2",
+    "rollup": "^2.74.1",
+    "rollup-plugin-serve": "^1.1.0",
+    "rollup-plugin-typescript2": "^0.31.2",
+    "rollup-plugin-uglify": "^6.0.4",
+    "typescript": "^4.6.4",
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0"
+  },
+  "author": "Milen Milchev <mmilchev@gmail.com>"
+}
