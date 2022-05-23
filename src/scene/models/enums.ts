@@ -3,3 +3,8 @@ export enum ContentKey {
     Dragon = 'dragon',
     Stone = 'stone'
 }
+
+export enum Coordinate {
+    X = 'x',
+    Y = 'y'
+}

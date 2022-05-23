@@ -1,4 +1,5 @@
-import { ContentKey, Ibounds } from "./models";
+import { search, cursorInBounds, getBounds } from "./helpers/search-helper";
+import { ContentKey, Coordinate, Ibounds, Icoordinate } from "./models";
 
 export class GridMap extends Phaser.Scene {
 
@@ -8,13 +9,15 @@ export class GridMap extends Phaser.Scene {
     private selectedMenuItem = 0
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+
     
     // TODO: export to JSON or user input
     private gridConfig = {
-        numberOfTilesX: 4,
-        numberOfTilesY: 4
+        numberOfTilesX: 16,
+        numberOfTilesY: 16
     }
     private gridBounds?: Ibounds;
+    private coordsArrays?: Icoordinate;
 
     preload() {
         this.load.image(ContentKey.Dragon, 'assets/tile1.jpg');
@@ -28,7 +31,12 @@ export class GridMap extends Phaser.Scene {
         // this.input.on('pointerover', this.tileHover); // TODO: add hover color background
 
         this.grid = this.populateGrid();
-        this.gridBounds = this.getBounds(this.grid[0][0], this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1]);
+        this.gridBounds = getBounds(this.grid[0][0], this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1]);
+        
+        this.coordsArrays = {
+            x: this.getCoordArray(Coordinate.X),
+            y: this.getCoordArray(Coordinate.Y)
+        };
 
         const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ContentKey.Dragon);
         const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ContentKey.Stone);
@@ -76,15 +84,6 @@ export class GridMap extends Phaser.Scene {
         return grid;
     }
 
-    private getBounds(startElement: Phaser.GameObjects.Image, endElement: Phaser.GameObjects.Image = startElement): Ibounds {
-        return {
-            starX: startElement.x - 12,
-            starY: startElement.y - 12,
-            endX: endElement.x + 12,
-            endY: endElement.y + 12
-        };
-    }
-
     private selectedTile(index: number): void {
         const currentItem = this.menuItems[this.selectedMenuItem];
 
@@ -128,23 +127,36 @@ export class GridMap extends Phaser.Scene {
         }
     }
 
-    private locateGridTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
-        if (this.gridBounds && this.cursorInBounds(inputCoordX, inputCoordY, this.gridBounds)) {
-            for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
-                for (let y = 0; y < this.gridConfig.numberOfTilesY; y++) {
+    private getCoordArray(coordinate: Coordinate): Phaser.GameObjects.Image[] {
+        const newCoordArray: Phaser.GameObjects.Image[] = [];
 
-                    if (this.cursorInBounds(inputCoordX, inputCoordY, this.getBounds(this.grid[x][y]))) {
-                        return this.grid[x][y];
-                    }
+        for (let xIndex = 0; xIndex < this.gridConfig.numberOfTilesX; xIndex++) {
+            newCoordArray.push(this.grid[xIndex][0]);
+
+            if(coordinate === Coordinate.Y) {
+                for (let yIndex = 1; yIndex < this.gridConfig.numberOfTilesY; yIndex++) {
+                    newCoordArray.push(this.grid[0][yIndex]);
+                }
+                return newCoordArray;
+            }
+        }
+        return newCoordArray;
+    }
+
+    private locateGridTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
+        if (this.gridBounds && cursorInBounds(inputCoordX, inputCoordY, this.gridBounds)) {
+            const xArray = this.coordsArrays?.x;
+            const yArray = this.coordsArrays?.y;
+            
+            if(xArray?.length && yArray?.length) {
+                const x = search(xArray, inputCoordX, Coordinate.X);
+                const y = search(yArray, inputCoordY, Coordinate.Y);
+    
+                if(x >= 0 && y >= 0)
+                {
+                    return this.grid[x][y];
                 }
             }
         }
-    }
-
-    private cursorInBounds(cursorX: number, cursorY: number, boundsElement: Ibounds): boolean {
-        const inBoundsX = boundsElement.starX <= cursorX && cursorX <= boundsElement.endX;
-        const inBoundsY = boundsElement.starY <= cursorY && cursorY <= boundsElement.endY;
-            
-        return inBoundsX && inBoundsY;
     }
 }

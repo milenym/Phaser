@@ -1,2 +1,2 @@
-export * from './assets.enum';
+export * from './enums';
 export * from './grid-bounds';
