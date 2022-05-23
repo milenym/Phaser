@@ -107,29 +107,44 @@ export class GridMap extends Phaser.Scene {
     }
 
     private gridTilePaste(pointer: Phaser.Input.Pointer): void {
-        const gridItem = this.locateGridTile(pointer.position.x, pointer.position.y);
+        if (this.activeImage) {
+            const gridItem = this.locateGridTile(pointer.position.x, pointer.position.y);
 
-        if (gridItem) {
-            gridItem.setTexture(this.activeImage ? this.activeImage.texture.key : ContentKey.Empty)
+            if (gridItem) {
+                gridItem.setTexture(this.activeImage ? this.activeImage.texture.key : ContentKey.Empty)
+            }
         }
     }
 
     private locateGridTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
-
-        for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
-            for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
-                const gridItem = this.grid[x][y];
-
-                if (gridItem.x - 12 <= inputCoordX 
-                   && gridItem.x + 12 >= inputCoordX 
-                   && gridItem.y - 12 <= inputCoordY 
-                   && gridItem.y + 12 >= inputCoordY
-                   ) 
-                {
-
-                    return this.grid[x][y];
+        if (this.cursorInBounds(inputCoordX, inputCoordY)) {
+            for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
+                for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
+                    const gridItem = this.grid[x][y];
+    
+                    if (gridItem.x - 12 <= inputCoordX 
+                       && gridItem.x + 12 >= inputCoordX 
+                       && gridItem.y - 12 <= inputCoordY 
+                       && gridItem.y + 12 >= inputCoordY
+                       ) 
+                    {
+    
+                        return this.grid[x][y];
+                    }
                 }
             }
         }
+    }
+
+    private cursorInBounds(cursorX: number, cursorY: number): boolean {
+        const gridXStartPosition = this.grid[0][0].x - 12;
+        const gridYStartPosition = this.grid[0][0].y - 12;
+        const gridXEndPosition = this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1].x + 12;
+        const gridYEndPosition = this.grid[this.gridConfig.numberOfTilexY - 1][this.gridConfig.numberOfTilexY -1].y + 12;
+
+        const inBoundsX = gridXStartPosition <= cursorX && gridXEndPosition >= cursorX;
+        const inBoundsY = gridYStartPosition <= cursorY && gridYEndPosition >= cursorY;
+        
+        return inBoundsX && inBoundsY ? true : false;
     }
 }
