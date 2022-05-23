@@ -1,5 +1,5 @@
 import { ContentKey } from "./assets.enum";
-import { IgridBounds } from "./grid-bounds";
+import { Ibounds } from "./grid-bounds";
 
 export class GridMap extends Phaser.Scene {
 
@@ -15,7 +15,7 @@ export class GridMap extends Phaser.Scene {
         numberOfTilesX: 4,
         numberOfTilesY: 4
     }
-    private gridBounds?: IgridBounds;
+    private gridBounds?: Ibounds;
 
     preload() {
         this.load.image(ContentKey.Dragon, 'assets/tile1.jpg');
@@ -29,7 +29,7 @@ export class GridMap extends Phaser.Scene {
         // this.input.on('pointerover', this.tileHover); // TODO: add hover color background
 
         this.grid = this.populateGrid();
-        this.gridBounds = this.getGridBounds();
+        this.gridBounds = this.getBounds(this.grid[0][0], this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1]);
 
         const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ContentKey.Dragon);
         const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ContentKey.Stone);
@@ -77,12 +77,12 @@ export class GridMap extends Phaser.Scene {
         return grid;
     }
 
-    private getGridBounds(): IgridBounds {
+    private getBounds(startElement: Phaser.GameObjects.Image, endElement: Phaser.GameObjects.Image = startElement): Ibounds {
         return {
-            starX: this.grid[0][0].x - 12,
-            starY: this.grid[0][0].y - 12,
-            endX: this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1].x + 12,
-            endY: this.grid[this.gridConfig.numberOfTilesY - 1][this.gridConfig.numberOfTilesY -1].y + 12
+            starX: startElement.x - 12,
+            starY: startElement.x - 12,
+            endX: endElement.x + 12,
+            endY: endElement.y + 12
         };
     }
 
@@ -130,18 +130,11 @@ export class GridMap extends Phaser.Scene {
     }
 
     private locateGridTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
-        if (this.cursorInBounds(inputCoordX, inputCoordY)) {
+        if (this.gridBounds && this.cursorInBounds(inputCoordX, inputCoordY, this.gridBounds)) {
             for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
                 for (let y = 0; y < this.gridConfig.numberOfTilesY; y++) {
-                    const gridItem = this.grid[x][y];
-    
-                    if (gridItem.x - 12 <= inputCoordX 
-                       && gridItem.x + 12 >= inputCoordX 
-                       && gridItem.y - 12 <= inputCoordY 
-                       && gridItem.y + 12 >= inputCoordY
-                       ) 
-                    {
-    
+
+                    if (this.cursorInBounds(inputCoordX, inputCoordY, this.getBounds(this.grid[x][y]))) {
                         return this.grid[x][y];
                     }
                 }
@@ -149,13 +142,10 @@ export class GridMap extends Phaser.Scene {
         }
     }
 
-    private cursorInBounds(cursorX: number, cursorY: number): boolean {
-        if(this.gridBounds) {
-            const inBoundsX =  this.gridBounds.starX <= cursorX && cursorX <= this.gridBounds.endX;
-            const inBoundsY = this.gridBounds.starY <= cursorY && cursorY <= this.gridBounds.endY;
+    private cursorInBounds(cursorX: number, cursorY: number, boundsElement: Ibounds): boolean {
+        const inBoundsX = boundsElement.starX <= cursorX && cursorX <= boundsElement.endX;
+        const inBoundsY = boundsElement.starY <= cursorY && cursorY <= boundsElement.endY;
             
-            return inBoundsX && inBoundsY;
-        }
-        return false;
+        return inBoundsX && inBoundsY;
     }
 }
