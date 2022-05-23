@@ -12,7 +12,7 @@ export class GridMap extends Phaser.Scene {
     // TODO: export to JSON or user input
     private gridConfig = {
         numberOfTilesX: 4,
-        numberOfTilexY: 4
+        numberOfTilesY: 4
     }
 
     preload() {
@@ -57,10 +57,10 @@ export class GridMap extends Phaser.Scene {
         for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
             grid[x] = []
 
-            for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
+            for (let y = 0; y < this.gridConfig.numberOfTilesY; y++) {
                 
                 const xStartPoint = this.gridConfig.numberOfTilesX * 24 / 2;
-                const yStartpoint = this.gridConfig.numberOfTilexY * 24 / 2;
+                const yStartpoint = this.gridConfig.numberOfTilesY * 24 / 2;
 
                 const newGridX = (+this.game.config.width / 2) - xStartPoint + (x * 24) + 12;
                 const newGridY = (+this.game.config.height / 2) - yStartpoint + (y * 24) + 12;
@@ -119,7 +119,7 @@ export class GridMap extends Phaser.Scene {
     private locateGridTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
         if (this.cursorInBounds(inputCoordX, inputCoordY)) {
             for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
-                for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
+                for (let y = 0; y < this.gridConfig.numberOfTilesY; y++) {
                     const gridItem = this.grid[x][y];
     
                     if (gridItem.x - 12 <= inputCoordX 
@@ -140,7 +140,7 @@ export class GridMap extends Phaser.Scene {
         const gridXStartPosition = this.grid[0][0].x - 12;
         const gridYStartPosition = this.grid[0][0].y - 12;
         const gridXEndPosition = this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1].x + 12;
-        const gridYEndPosition = this.grid[this.gridConfig.numberOfTilexY - 1][this.gridConfig.numberOfTilexY -1].y + 12;
+        const gridYEndPosition = this.grid[this.gridConfig.numberOfTilesY - 1][this.gridConfig.numberOfTilesY -1].y + 12;
 
         const inBoundsX = gridXStartPosition <= cursorX && gridXEndPosition >= cursorX;
         const inBoundsY = gridYStartPosition <= cursorY && gridYEndPosition >= cursorY;
