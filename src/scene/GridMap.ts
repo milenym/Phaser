@@ -1,5 +1,4 @@
-import { ContentKey } from "./assets.enum";
-import { Ibounds } from "./grid-bounds";
+import { ContentKey, Ibounds } from "./models";
 
 export class GridMap extends Phaser.Scene {
 
