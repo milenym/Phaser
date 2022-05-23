@@ -1,12 +1,12 @@
 import Phaser from "phaser";
-import { FourSquares } from "./scene/FourSquares";
+import { GridMap } from "./scene/GridMap";
 
 const config = {
     type: Phaser.AUTO,
     backgroundColor: '#125555',
-    width: 200,
-    height: 200,
-    scene: FourSquares
+    width: 300,
+    height: 300,
+    scene: GridMap
 };
 
 const game = new Phaser.Game(config);
