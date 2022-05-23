@@ -22,8 +22,8 @@ export class GridMap extends Phaser.Scene {
     create() {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.input.on('pointerdown', this.gridTileClick, this);
-        // this.input.on('pointerover', this.tileHover ); // not triggering
-
+        // this.input.on('pointerover', this.tileHover ); // TODO: add hover color & fix 'pointerover'
+        
         this.populateGrid();
         const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, 'dragon');
         const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, 'stone');
@@ -71,7 +71,7 @@ export class GridMap extends Phaser.Scene {
         currentItem.setTint(0xffffff);
 
         const item = this.menuItems[index];
-        item.setTint(0x66ff7f);
+        item.setTint(0x66ff7f); // TODO: add arrow or better indication for selected image
        
         this.selectedMenuItem = index;
     }
