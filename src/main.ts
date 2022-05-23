@@ -3,10 +3,10 @@ import { GridMap } from "./scene/GridMap";
 
 const config = {
     type: Phaser.AUTO,
-    backgroundColor: '#125555',
+    backgroundColor: '#88bfc1',
     width: 300,
     height: 300,
     scene: GridMap
 };
 
-const game = new Phaser.Game(config);
+export const game = new Phaser.Game(config);

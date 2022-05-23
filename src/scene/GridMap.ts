@@ -34,9 +34,9 @@ export class GridMap extends Phaser.Scene {
     }
 
     update() {
-        const leftKeyPressed = Phaser.Input.Keyboard.JustDown(this.cursors.left!);
-        const rightKeyPressed = Phaser.Input.Keyboard.JustDown(this.cursors.right!);
-        const spaceKeyPressed = Phaser.Input.Keyboard.JustDown(this.cursors.space!);
+        const leftKeyPressed = Phaser.Input.Keyboard.JustDown(this.cursors?.left);
+        const rightKeyPressed = Phaser.Input.Keyboard.JustDown(this.cursors?.right);
+        const spaceKeyPressed = Phaser.Input.Keyboard.JustDown(this.cursors?.space);
 
         if (leftKeyPressed) {
             this.selectNextTile(1);
@@ -76,7 +76,7 @@ export class GridMap extends Phaser.Scene {
         this.selectedMenuItem = index;
     }
 
-    private selectNextTile(change: number = 1): void {
+    private selectNextTile(change = 1): void {
         let index = this.selectedMenuItem + change;
 
         if(index >= this.menuItems.length) {
