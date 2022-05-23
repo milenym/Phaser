@@ -24,7 +24,7 @@ export class GridMap extends Phaser.Scene {
     create() {
         this.cursors = this.input.keyboard.createCursorKeys();
         this.input.on('pointerdown', this.gridTilePaste, this);
-        // this.input.on('pointerover', this.tileHover ); // TODO: add hover color & fix 'pointerover'
+        // this.input.on('pointerover', this.tileHover); // TODO: add hover color background
 
         this.populateGrid();
         const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ContentKey.Dragon);
@@ -98,28 +98,28 @@ export class GridMap extends Phaser.Scene {
             this.gridTilePaste(this.input.activePointer);
         }
         else {
-            const selectedItem = this.menuItems[this.selectedMenuItem];
-            this.activeImage = selectedItem;
+            this.activeImage = this.menuItems[this.selectedMenuItem];
         }
     }
 
     private gridTilePaste(pointer: Phaser.Input.Pointer): void {
-        const gridItem = this.locateTile(pointer);
+        const gridItem = this.locateTile(pointer.position.x, pointer.position.y);
 
         if (gridItem) {
             gridItem.setTexture(this.activeImage ? this.activeImage.texture.key : ContentKey.Empty)
         }
     }
 
-    private locateTile(pointer: Phaser.Input.Pointer): Phaser.GameObjects.Image | undefined {
+    private locateTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
+
         for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
             for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
                 const gridItem = this.grid[x][y];
 
-                if (gridItem.x - 12 <= pointer.position.x 
-                   && gridItem.x + 12 >= pointer.position.x 
-                   && gridItem.y - 12 <= pointer.position.y 
-                   && gridItem.y + 12 >= pointer.position.y
+                if (gridItem.x - 12 <= inputCoordX 
+                   && gridItem.x + 12 >= inputCoordX 
+                   && gridItem.y - 12 <= inputCoordY 
+                   && gridItem.y + 12 >= inputCoordY
                    ) 
                 {
 
