@@ -80,7 +80,7 @@ export class GridMap extends Phaser.Scene {
     private getBounds(startElement: Phaser.GameObjects.Image, endElement: Phaser.GameObjects.Image = startElement): Ibounds {
         return {
             starX: startElement.x - 12,
-            starY: startElement.x - 12,
+            starY: startElement.y - 12,
             endX: endElement.x + 12,
             endY: endElement.y + 12
         };
