@@ -1,4 +1,4 @@
-export enum ImageKey {
+export enum ContentKey {
     Empty = 'empty',
     Dragon = 'dragon',
     Stone = 'stone'

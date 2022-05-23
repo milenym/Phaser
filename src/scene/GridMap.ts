@@ -1,4 +1,4 @@
-import { ImageKey } from "./assets.enum";
+import { ContentKey } from "./assets.enum";
 
 export class GridMap extends Phaser.Scene {
 
@@ -16,9 +16,9 @@ export class GridMap extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image(ImageKey.Dragon, 'assets/tile1.jpg');
-        this.load.image(ImageKey.Stone, 'assets/tile2.jpg');
-        this.load.image(ImageKey.Empty, 'assets/empty.png');
+        this.load.image(ContentKey.Dragon, 'assets/tile1.jpg');
+        this.load.image(ContentKey.Stone, 'assets/tile2.jpg');
+        this.load.image(ContentKey.Empty, 'assets/empty.png');
     }
 
     create() {
@@ -27,8 +27,8 @@ export class GridMap extends Phaser.Scene {
         // this.input.on('pointerover', this.tileHover ); // TODO: add hover color & fix 'pointerover'
 
         this.populateGrid();
-        const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ImageKey.Dragon);
-        const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ImageKey.Stone);
+        const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ContentKey.Dragon);
+        const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ContentKey.Stone);
 
         this.menuItems.push(menuItem1, menuItem2);
 
@@ -63,7 +63,7 @@ export class GridMap extends Phaser.Scene {
                 const newGridX = (+this.game.config.width / 2) - xStartPoint + (x * 24) + 12;
                 const newGridY = (+this.game.config.height / 2) - yStartpoint + (y * 24) + 12;
 
-                const gridElement = this.add.image(newGridX, newGridY, ImageKey.Empty);
+                const gridElement = this.add.image(newGridX, newGridY, ContentKey.Empty);
                 this.grid[x][y] = gridElement;
             }
         }
@@ -107,7 +107,7 @@ export class GridMap extends Phaser.Scene {
         const gridItem = this.locateTile(pointer);
 
         if (gridItem) {
-            gridItem.setTexture(this.activeImage ? this.activeImage.texture.key : ImageKey.Empty)
+            gridItem.setTexture(this.activeImage ? this.activeImage.texture.key : ContentKey.Empty)
         }
     }
 
