@@ -26,7 +26,7 @@ export class GridMap extends Phaser.Scene {
         this.input.on('pointerdown', this.gridTilePaste, this);
         // this.input.on('pointerover', this.tileHover); // TODO: add hover color background
 
-        this.populateGrid();
+        this.grid = this.populateGrid();
         const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ContentKey.Dragon);
         const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ContentKey.Stone);
 
@@ -51,9 +51,11 @@ export class GridMap extends Phaser.Scene {
         }
     }
 
-    private populateGrid(): void {
+    private populateGrid(): Phaser.GameObjects.Image[][] {
+        const grid: Phaser.GameObjects.Image[][] = []
+
         for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
-            this.grid[x] = []
+            grid[x] = []
 
             for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
                 
@@ -64,9 +66,11 @@ export class GridMap extends Phaser.Scene {
                 const newGridY = (+this.game.config.height / 2) - yStartpoint + (y * 24) + 12;
 
                 const gridElement = this.add.image(newGridX, newGridY, ContentKey.Empty);
-                this.grid[x][y] = gridElement;
+                grid[x][y] = gridElement;
             }
         }
+
+        return grid;
     }
 
     private selectedTile(index: number): void {
@@ -103,14 +107,14 @@ export class GridMap extends Phaser.Scene {
     }
 
     private gridTilePaste(pointer: Phaser.Input.Pointer): void {
-        const gridItem = this.locateTile(pointer.position.x, pointer.position.y);
+        const gridItem = this.locateGridTile(pointer.position.x, pointer.position.y);
 
         if (gridItem) {
             gridItem.setTexture(this.activeImage ? this.activeImage.texture.key : ContentKey.Empty)
         }
     }
 
-    private locateTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
+    private locateGridTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
 
         for (let x = 0; x < this.gridConfig.numberOfTilesX; x++) {
             for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
