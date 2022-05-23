@@ -1,4 +1,5 @@
 import { ContentKey } from "./assets.enum";
+import { IgridBounds } from "./grid-bounds";
 
 export class GridMap extends Phaser.Scene {
 
@@ -8,12 +9,13 @@ export class GridMap extends Phaser.Scene {
     private selectedMenuItem = 0
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-
+    
     // TODO: export to JSON or user input
     private gridConfig = {
         numberOfTilesX: 4,
         numberOfTilesY: 4
     }
+    private gridBounds?: IgridBounds;
 
     preload() {
         this.load.image(ContentKey.Dragon, 'assets/tile1.jpg');
@@ -27,6 +29,8 @@ export class GridMap extends Phaser.Scene {
         // this.input.on('pointerover', this.tileHover); // TODO: add hover color background
 
         this.grid = this.populateGrid();
+        this.gridBounds = this.getGridBounds();
+
         const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ContentKey.Dragon);
         const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ContentKey.Stone);
 
@@ -71,6 +75,15 @@ export class GridMap extends Phaser.Scene {
         }
 
         return grid;
+    }
+
+    private getGridBounds(): IgridBounds {
+        return {
+            starX: this.grid[0][0].x - 12,
+            starY: this.grid[0][0].y - 12,
+            endX: this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1].x + 12,
+            endY: this.grid[this.gridConfig.numberOfTilesY - 1][this.gridConfig.numberOfTilesY -1].y + 12
+        };
     }
 
     private selectedTile(index: number): void {
@@ -137,14 +150,12 @@ export class GridMap extends Phaser.Scene {
     }
 
     private cursorInBounds(cursorX: number, cursorY: number): boolean {
-        const gridXStartPosition = this.grid[0][0].x - 12;
-        const gridYStartPosition = this.grid[0][0].y - 12;
-        const gridXEndPosition = this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1].x + 12;
-        const gridYEndPosition = this.grid[this.gridConfig.numberOfTilesY - 1][this.gridConfig.numberOfTilesY -1].y + 12;
-
-        const inBoundsX = gridXStartPosition <= cursorX && gridXEndPosition >= cursorX;
-        const inBoundsY = gridYStartPosition <= cursorY && gridYEndPosition >= cursorY;
-        
-        return inBoundsX && inBoundsY ? true : false;
+        if(this.gridBounds) {
+            const inBoundsX =  this.gridBounds.starX <= cursorX && cursorX <= this.gridBounds.endX;
+            const inBoundsY = this.gridBounds.starY <= cursorY && cursorY <= this.gridBounds.endY;
+            
+            return inBoundsX && inBoundsY;
+        }
+        return false;
     }
 }
