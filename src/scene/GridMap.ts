@@ -1,3 +1,5 @@
+import { ImageKey } from "./assets.enum";
+
 export class GridMap extends Phaser.Scene {
 
     private menuItems: Phaser.GameObjects.Image[] = [];
@@ -14,19 +16,19 @@ export class GridMap extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image('dragon', 'assets/tile1.jpg');
-        this.load.image('stone', 'assets/tile2.jpg');
-        this.load.image('empty', 'assets/empty.png');
+        this.load.image(ImageKey.Dragon, 'assets/tile1.jpg');
+        this.load.image(ImageKey.Stone, 'assets/tile2.jpg');
+        this.load.image(ImageKey.Empty, 'assets/empty.png');
     }
 
     create() {
         this.cursors = this.input.keyboard.createCursorKeys();
-        this.input.on('pointerdown', this.gridTileClick, this);
+        this.input.on('pointerdown', this.gridTilePaste, this);
         // this.input.on('pointerover', this.tileHover ); // TODO: add hover color & fix 'pointerover'
-        
+
         this.populateGrid();
-        const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, 'dragon');
-        const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, 'stone');
+        const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ImageKey.Dragon);
+        const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ImageKey.Stone);
 
         this.menuItems.push(menuItem1, menuItem2);
 
@@ -54,12 +56,14 @@ export class GridMap extends Phaser.Scene {
             this.grid[x] = []
 
             for (let y = 0; y < this.gridConfig.numberOfTilexY; y++) {
+                
                 const xStartPoint = this.gridConfig.numberOfTilesX * 24 / 2;
                 const yStartpoint = this.gridConfig.numberOfTilexY * 24 / 2;
-                const sx = (+this.game.config.width / 2) - xStartPoint + (x * 24) + 12;
-                const sy = (+this.game.config.height / 2) - yStartpoint + (y * 24) + 12;
 
-                const gridElement = this.add.image(sx, sy, 'empty');
+                const newGridX = (+this.game.config.width / 2) - xStartPoint + (x * 24) + 12;
+                const newGridY = (+this.game.config.height / 2) - yStartpoint + (y * 24) + 12;
+
+                const gridElement = this.add.image(newGridX, newGridY, ImageKey.Empty);
                 this.grid[x][y] = gridElement;
             }
         }
@@ -91,12 +95,7 @@ export class GridMap extends Phaser.Scene {
 
     private confirmSelection(): void {
         if (this.activeImage && this.activeImage === this.menuItems[this.selectedMenuItem]) {
-            const gridItem = this.locateTile(this.input.activePointer);
-
-            if (gridItem) {
-                gridItem.setTexture(this.activeImage.texture.key)
-            }
-            
+            this.gridTilePaste(this.input.activePointer);
         }
         else {
             const selectedItem = this.menuItems[this.selectedMenuItem];
@@ -104,13 +103,11 @@ export class GridMap extends Phaser.Scene {
         }
     }
 
-    private gridTileClick(pointer: Phaser.Input.Pointer): void {
-        if (this.activeImage) {
-            const tile = this.locateTile(pointer);
+    private gridTilePaste(pointer: Phaser.Input.Pointer): void {
+        const gridItem = this.locateTile(pointer);
 
-            if (tile) {
-                tile.setTexture(this.activeImage.texture.key);
-            }
+        if (gridItem) {
+            gridItem.setTexture(this.activeImage ? this.activeImage.texture.key : ImageKey.Empty)
         }
     }
 
@@ -123,7 +120,8 @@ export class GridMap extends Phaser.Scene {
                    && gridItem.x + 12 >= pointer.position.x 
                    && gridItem.y - 12 <= pointer.position.y 
                    && gridItem.y + 12 >= pointer.position.y
-                   ) {
+                   ) 
+                {
 
                     return this.grid[x][y];
                 }
