@@ -4,3 +4,8 @@ export interface Ibounds {
     endX: number,
     endY: number,
 }
+
+export interface Icoordinate {
+    x: number[],
+    y: number[]
+}
