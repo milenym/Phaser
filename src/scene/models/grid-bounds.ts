@@ -6,6 +6,6 @@ export interface Ibounds {
 }
 
 export interface Icoordinate {
-    x: Phaser.GameObjects.Image[],
-    y: Phaser.GameObjects.Image[]
+    x: number[],
+    y: number[]
 }

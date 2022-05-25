@@ -1,5 +1,5 @@
-import { search, cursorInBounds, getBounds } from "./helpers/search-helper";
-import { ContentKey, Coordinate, Ibounds, Icoordinate } from "./models";
+import { search, cursorInBounds, getBounds, cursorInGridBounds } from "./helpers/search-helpers";
+import { ContentKey, Ibounds, Icoordinate } from "./models";
 
 export class GridMap extends Phaser.Scene {
 
@@ -10,14 +10,15 @@ export class GridMap extends Phaser.Scene {
 
     private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
 
-    
-    // TODO: export to JSON or user input
     private gridConfig = {
         numberOfTilesX: 16,
         numberOfTilesY: 16
     }
     private gridBounds?: Ibounds;
-    private coordsArrays?: Icoordinate;
+    private coordsArrays?: Icoordinate = {
+        x: [],
+        y: []
+    };
 
     preload() {
         this.load.image(ContentKey.Dragon, 'assets/tile1.jpg');
@@ -32,11 +33,6 @@ export class GridMap extends Phaser.Scene {
 
         this.grid = this.populateGrid();
         this.gridBounds = getBounds(this.grid[0][0], this.grid[this.gridConfig.numberOfTilesX - 1][this.gridConfig.numberOfTilesX -1]);
-        
-        this.coordsArrays = {
-            x: this.getCoordArray(Coordinate.X),
-            y: this.getCoordArray(Coordinate.Y)
-        };
 
         const menuItem1 = this.add.image(+this.game.config.width / 2 - 12, +this.game.config.height - 20, ContentKey.Dragon);
         const menuItem2 = this.add.image(+this.game.config.width / 2 + 12, +this.game.config.height - 20, ContentKey.Stone);
@@ -77,6 +73,15 @@ export class GridMap extends Phaser.Scene {
                 const newGridY = (+this.game.config.height / 2) - yStartpoint + (y * 24) + 12;
 
                 const gridElement = this.add.image(newGridX, newGridY, ContentKey.Empty);
+
+                // Create Y and Y coordinates
+                if (y === 0) {
+                    this.coordsArrays?.x.push(newGridX);
+                } 
+                if (x === 0) {
+                    this.coordsArrays?.y.push(newGridY);
+                }
+
                 grid[x][y] = gridElement;
             }
         }
@@ -127,30 +132,14 @@ export class GridMap extends Phaser.Scene {
         }
     }
 
-    private getCoordArray(coordinate: Coordinate): Phaser.GameObjects.Image[] {
-        const newCoordArray: Phaser.GameObjects.Image[] = [];
-
-        for (let xIndex = 0; xIndex < this.gridConfig.numberOfTilesX; xIndex++) {
-            newCoordArray.push(this.grid[xIndex][0]);
-
-            if(coordinate === Coordinate.Y) {
-                for (let yIndex = 1; yIndex < this.gridConfig.numberOfTilesY; yIndex++) {
-                    newCoordArray.push(this.grid[0][yIndex]);
-                }
-                return newCoordArray;
-            }
-        }
-        return newCoordArray;
-    }
-
     private locateGridTile(inputCoordX: number, inputCoordY: number): Phaser.GameObjects.Image | undefined {
-        if (this.gridBounds && cursorInBounds(inputCoordX, inputCoordY, this.gridBounds)) {
+        if (this.gridBounds && cursorInGridBounds(inputCoordX, inputCoordY, this.gridBounds)) {
             const xArray = this.coordsArrays?.x;
             const yArray = this.coordsArrays?.y;
             
             if(xArray?.length && yArray?.length) {
-                const x = search(xArray, inputCoordX, Coordinate.X);
-                const y = search(yArray, inputCoordY, Coordinate.Y);
+                const x = search(xArray, inputCoordX);
+                const y = search(yArray, inputCoordY);
     
                 if(x >= 0 && y >= 0)
                 {

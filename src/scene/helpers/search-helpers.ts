@@ -1,17 +1,17 @@
-import { Coordinate, Ibounds } from "../models";
+import { Ibounds } from "../models";
 
-const inBounds = (target: number, item: number): boolean => {
+const inTileBounds = (target: number, item: number): boolean => {
     return item - 12 <= target && target <= item + 12;
 }
 
-export const cursorInBounds = (cursorX: number, cursorY: number, boundsElement: Ibounds): boolean  => {
+export const cursorInGridBounds = (cursorX: number, cursorY: number, boundsElement: Ibounds): boolean  => {
     const inBoundsX = boundsElement.starX <= cursorX && cursorX <= boundsElement.endX;
     const inBoundsY = boundsElement.starY <= cursorY && cursorY <= boundsElement.endY;
             
     return inBoundsX && inBoundsY;
 }
 
-export const search = (imageArray: Phaser.GameObjects.Image[], num: number, coordinate: Coordinate): number => {
+export const search = (imageArray: number[], searchedCoord: number): number => {
     let low = 0;
     let mid = 0
     let high = imageArray.length - 1;
@@ -20,11 +20,11 @@ export const search = (imageArray: Phaser.GameObjects.Image[], num: number, coor
     {
         mid = Math.floor((low + high) / 2);
 
-        if (num < imageArray[mid][coordinate] && !inBounds(num, imageArray[mid][coordinate])) {
+        if (searchedCoord < imageArray[mid] && !inTileBounds(searchedCoord, imageArray[mid])) {
             high = mid - 1;
             continue;
         }
-        else if(num > imageArray[mid][coordinate] && !inBounds(num, imageArray[mid][coordinate])) {
+        else if(searchedCoord > imageArray[mid] && !inTileBounds(searchedCoord, imageArray[mid])) {
             low = mid + 1;
             continue
         }
