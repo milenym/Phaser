@@ -1,4 +1,4 @@
-import { search, cursorInBounds, getBounds, cursorInGridBounds } from "./helpers/search-helpers";
+import { search, getBounds, cursorInGridBounds } from "./helpers/search-helpers";
 import { ContentKey, Ibounds, Icoordinate } from "./models";
 
 export class GridMap extends Phaser.Scene {
